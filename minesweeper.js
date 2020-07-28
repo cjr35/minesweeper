@@ -15,7 +15,7 @@ field.fill(function() {
 	if (minesPlaced < mineTotal) {
 		if (Math.random() <= mineProbability()) {
 			minesPlaced++;
-			value = 'mine'
+			value = 'mine';
 		}
 	}
 	spacesCovered++;

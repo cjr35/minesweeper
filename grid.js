@@ -5,7 +5,7 @@ export default class Grid {
 
 		this.cells = new Array(width);
 		for (let i = 0; i < width; i++) {
-			cells[i] = new Array(height);
+			this.cells[i] = new Array(height);
 		}
 	}
 
@@ -19,13 +19,13 @@ export default class Grid {
 
 	get(x, y) {
 		if (this.hasCell(x, y)) {
-			return cells[x][y];
+			return this.cells[x][y];
 		}
 	}
 
 	set(x, y, value) {
 		if (this.hasCell(x, y)) {
-			cells[x][y] = value;
+			this.cells[x][y] = value;
 		}
 	}
 
