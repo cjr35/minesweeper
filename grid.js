@@ -10,10 +10,22 @@ class Grid {
 	}
 
 	hasCell(x, y) {
-		return (0 <= x && x < width) && (0 <= y && y < height);
+		let exists = (0 <= x && x < this.width) && (0 <= y && y < this.height);
+		if (!exists) {
+			console.error("Out of bounds cell accessed: ${x}, ${y}");
+		}
+		return exists;
 	}
 
 	get(x, y) {
-		return cells[x][y];
+		if (this.hasCell(x, y)) {
+			return cells[x][y];
+		}
+	}
+
+	set(x, y, value) {
+		if (this.hasCell(x, y)) {
+			cells[x][y] = value;
+		}
 	}
 }
