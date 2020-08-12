@@ -29,11 +29,13 @@ export default class Grid {
 		}
 	}
 
-	fill(func) {
+	fill(callback) {
 		for (let i = 0; i < this.width; i++) {
 			for (let j = 0; j < this.height; j++) {
-				this.set(i, j, func());
+				this.set(i, j, callback());
 			}
 		}
 	}
+
+
 }

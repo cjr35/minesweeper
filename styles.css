@@ -1,0 +1,21 @@
+#game-section {
+	--rows: 0;
+	--cols: 0;
+	--cell-size: 25px;
+	--gap: 2.5px;
+}
+
+.minefield-container {
+	display: grid;
+	grid-template-rows: repeat(var(--rows), var(--cell-size));
+	grid-template-columns: repeat(var(--cols), var(--cell-size));
+	gap: var(--gap);
+}
+
+.minefield-item {
+	grid-row-start: auto;
+	grid-column-start: auto;
+
+	background-color: plum;
+	border-radius: var(--gap);
+}
