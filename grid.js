@@ -12,7 +12,7 @@ export default class Grid {
 	hasCell(x, y) {
 		let exists = (0 <= x && x < this.width) && (0 <= y && y < this.height);
 		if (!exists) {
-			console.error("Out of bounds cell accessed: ${x}, ${y}");
+			console.debug(`Out of bounds cell accessed: ${x}, ${y}`);
 		}
 		return exists;
 	}

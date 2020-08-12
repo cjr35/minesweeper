@@ -1,3 +1,13 @@
+:root {
+	--hidden-color: rgb(221, 160, 221);
+	--hidden-accent: rgb(221, 120, 221);
+
+	--safe-color: rgb(250, 250, 250);
+
+	--dangerous-color: rgb(240, 240, 240);
+	--dangerous-accent: rgb(240, 200, 240);
+}
+
 #game-section {
 	--rows: 0;
 	--cols: 0;
@@ -12,10 +22,36 @@
 	gap: var(--gap);
 }
 
-.minefield-item {
+.minefield-container > div {
 	grid-row-start: auto;
 	grid-column-start: auto;
 
-	background-color: plum;
 	border-radius: var(--gap);
+	transition: 0.2s ease-in-out;
+	z-index: 0;
+}
+
+.minefield-container > div:hover {
+	margin: -2.5%;
+	z-index: 1;
+}
+
+.hidden {
+	background-color: var(--hidden-color);
+}
+
+.hidden:hover {
+	background-color: var(--hidden-accent);
+}
+
+.safe {
+	background-color: var(--safe-color);
+}
+
+.dangerous {
+	background-color: var(--dangerous-color);
+}
+
+.dangerous:hover {
+	background-color: var(--dangerous-accent);
 }
