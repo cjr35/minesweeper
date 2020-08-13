@@ -76,10 +76,14 @@ function populateMinefield(initX, initY) {
 	});
 }
 
-function gridClick(event) {
+async function gridClick(event) {
 	let code = event.button;
 	let target = event.target;
-	
+
+	// let temp = target.className;
+	// target.className = "just-clicked";
+	// await sleep(40);
+	// target.className = temp;
 
 	if (code === 0) {
 		gridLeftClick(target);
@@ -164,4 +168,8 @@ function getNeighbors(x, y) {
 	}
 
 	return list;
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }

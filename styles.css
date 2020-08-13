@@ -37,6 +37,23 @@
 	text-align: center;
 }
 
+.just-clicked {
+	animation-name: pop;
+	animation-duration: 0.04s;
+	animation-iteration-count: 2;
+	animation-direction: alternate;
+}
+
+@keyframes pop {
+	0%		{margin: -2.5%}
+	4.5%	{margin: -4.5%;}
+	13.5%	{margin: -6.5%;}
+	32%		{margin: -8.5%;}
+	60%		{margin: -10.5%;}
+	88%		{margin: -12.5%;}
+	100%	{margin: -14.5%;}
+}
+
 .hidden {
 	background-color: var(--hidden-color);
 }
@@ -60,10 +77,16 @@
 	font-size: var(--font-size);
 	line-height: var(--cell-size);
 	
-	--angle: 12.5deg;
+	--angle: 0deg;
 	transform: rotate(var(--angle));
+	-ms-transform: rotate(var(--angle));
 	-webkit-transform: rotate(var(--angle));
 	display: inline-block;
+
+	pointer-events: none;
+	user-select: none;
+	-ms-user-select: none;
+	-webkit-user-select: none;
 }
 
 .adjacent-mines-0 {
