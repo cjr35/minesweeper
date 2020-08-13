@@ -76,6 +76,7 @@
 	font-family: 'Rowdies';
 	font-size: var(--font-size);
 	line-height: var(--cell-size);
+	transition: 0.2s ease-in-out;
 	
 	--angle: 0deg;
 	transform: rotate(var(--angle));
@@ -93,10 +94,47 @@
 	color: var(--some-color);
 }
 
+.adjacent-mines-1 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-2 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-3 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-4 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-5 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-6 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-7 {
+	color: var(--hidden-color);
+}
+
+.adjacent-mines-8 {
+	color: var(--flagged-accent);
+}
+
 .auto-reveal-eligible:hover {
 	background-color: var(--some-accent);
+	
 	margin: -2.5%;
 	z-index: 1;
+}
+
+.auto-reveal-eligible:hover > span {
+	color: black;
 }
 
 .flagged {

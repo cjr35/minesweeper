@@ -98,22 +98,73 @@ let newGame = true;
 function gridLeftClick(square) {
 	let x = square.getAttribute("data-x");
 	let y = square.getAttribute("data-y");
+	let className = square.className;
 
 	if (newGame) {
 		populateMinefield(x, y);
 		newGame = false;
 	}
 
-	if (square.className === "hidden") {
+	if (className === "hidden") {
 		let value = field.get(x, y);
-
-		if (value === -1) {
+		if (value === 1) {
 			console.log("you lose");
 		}
 		else if (value === 0) {
-			reveal(square, x, y);
+			reveal(square);
 		}
 	}
+	else if (className === "auto-reveal-eligible") {
+		getNeighbors(x, y).forEach(nbr => {
+			if (nbr.className === "hidden") {
+				reveal(nbr);
+			}
+		});
+		checkAutoRevealEligibility(square);
+	}
+}
+
+function reveal(square) {
+	if (square.className !== "hidden") {
+		return;
+	}
+
+	let x = square.getAttribute("data-x");
+	let y = square.getAttribute("data-y");
+
+	if (field.get(x, y) === 1) {
+		console.log("you lose");
+	}
+
+	let neighbors = getNeighbors(x, y);
+	let adjMineCount = neighbors.reduce((acc, nbr) => acc + field.get(nbr.getAttribute("data-x"), nbr.getAttribute("data-y")), 0);
+
+	if (adjMineCount === 0) {
+		square.className = "none-adjacent";
+		neighbors.forEach(nbr => nbr.className === "hidden" ?
+								 reveal(nbr) :
+								 null);
+	}
+	else {
+		square.className = "some-adjacent";
+	}
+
+	let span = document.createElement("span");
+	span.className = `adjacent-mines-${adjMineCount}`;
+	span.innerHTML = `${adjMineCount}`;
+	span.style.opacity = 0;
+	
+	let angle = (Math.random() * 15) - 7.5;
+	span.style.setProperty("--angle", `${angle}deg`);
+	square.appendChild(span);
+
+	setTimeout(() => {
+		span.style.opacity = 100;
+		neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
+								nbr.className === "auto-reveal-eligible" ?
+								checkAutoRevealEligibility(nbr) :
+								null);
+	}, 200);
 }
 
 function gridRightClick(square) {
@@ -126,31 +177,37 @@ function gridRightClick(square) {
 	else if (square.className === "flagged") {
 		square.className = "hidden";
 	}
-}
-
-function reveal(square) {
-	let x = square.getAttribute("data-x");
-	let y = square.getAttribute("data-y");
 
 	let neighbors = getNeighbors(x, y);
-	let adjacentMineCount = neighbors.reduce((acc, nbr) => acc + field.get(nbr.getAttribute("data-x"), nbr.getAttribute("data-y")), 0);
 
-	if (adjacentMineCount === 0) {
-		square.className = "none-adjacent";
-		neighbors.forEach(nbr => nbr.className === "hidden" ? reveal(nbr) : null);
+	neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
+							 nbr.className === "auto-reveal-eligible" ?
+							 checkAutoRevealEligibility(nbr) :
+							 null);
+}
+
+function checkAutoRevealEligibility(square) {
+	let x = square.getAttribute("data-x");
+	let y = square.getAttribute("data-y");
+	console.log(square.className);
+	let adjMineCount = Number(square.firstChild.innerHTML);
+	if (adjMineCount === 0) {
+		return;
 	}
-	else {
-		square.className = "some-adjacent";
-	}
+	let neighbors = getNeighbors(x, y);
 
-	let span = document.createElement("span");
-	span.className = `adjacent-mines-${adjacentMineCount}`;
-	span.innerHTML = `${adjacentMineCount}`;
-	
-	let angle = (Math.random() * 15) - 7.5;
-	span.style.setProperty("--angle", `${angle}deg`);
+	let adjFlaggedCount = 0;
+	let adjHiddenCount = 0;
 
-	setTimeout(() => square.appendChild(span), 200);
+	neighbors.forEach(nbr => {
+		if (nbr.className === "flagged") adjFlaggedCount++;
+		else if (nbr.className === "hidden") adjHiddenCount ++;
+	});
+
+	square.className = adjMineCount === adjFlaggedCount &&
+					   adjHiddenCount > 0 ?
+				   	   "auto-reveal-eligible" :
+				       "some-adjacent";
 }
 
 function getNeighbors(x, y) {
