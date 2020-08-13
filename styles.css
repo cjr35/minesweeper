@@ -1,11 +1,14 @@
 :root {
-	--hidden-color: rgb(221, 160, 221);
-	--hidden-accent: rgb(221, 120, 221);
+	--hidden-color: rgb(220, 160, 220);
+	--hidden-accent: rgb(220, 120, 220);
 
-	--safe-color: rgb(250, 250, 250);
+	--none-color: rgb(250, 250, 250);
 
-	--dangerous-color: rgb(240, 240, 240);
-	--dangerous-accent: rgb(240, 200, 240);
+	--some-color: rgb(240, 240, 240);
+	--some-accent: rgb(240, 200, 240);
+
+	--flagged-color: rgb(255, 90, 100);
+	--flagged-accent: rgb(255, 65, 85);
 }
 
 #game-section {
@@ -31,27 +34,36 @@
 	z-index: 0;
 }
 
-.minefield-container > div:hover {
-	margin: -2.5%;
-	z-index: 1;
-}
-
 .hidden {
 	background-color: var(--hidden-color);
 }
 
 .hidden:hover {
 	background-color: var(--hidden-accent);
+	margin: -2.5%;
+	z-index: 1;
 }
 
-.safe {
-	background-color: var(--safe-color);
+.none-adjacent {
+	background-color: var(--none-color);
 }
 
-.dangerous {
-	background-color: var(--dangerous-color);
+.some-adjacent, .auto-reveal-eligible {
+	background-color: var(--some-color);
 }
 
-.dangerous:hover {
-	background-color: var(--dangerous-accent);
+.auto-reveal-eligible:hover {
+	background-color: var(--some-accent);
+	margin: -2.5%;
+	z-index: 1;
+}
+
+.flagged {
+	background-color: var(--flagged-color);
+}
+
+.flagged:hover {
+	background-color: var(--flagged-accent);
+	margin: -2.5%;
+	z-index: 1;
 }

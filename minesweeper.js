@@ -13,6 +13,8 @@ class Minefield extends Grid {
 	}
 }
 
+document.addEventListener("DOMContentLoaded", init);
+
 function init() {
 	createGrid();
 }
@@ -40,7 +42,8 @@ function createGrid() {
 			let div = document.createElement("div");
 			div.className = "hidden";
 			div.id = `pos-${j}-${i}`;
-			div.onclick = onPlayerClick;
+			div.addEventListener("mouseup", gridClick);
+			div.addEventListener("contextmenu", (event) => {event.preventDefault();});
 			grid.appendChild(div);
 		}
 	}
@@ -58,11 +61,11 @@ function populateMinefield(initX, initY) {
 	}
 
 	field.fill(initX, initY, function(forceEmpty) {
-		let value = "0"; // empty space
+		let value = 0; // empty space
 		if (minesPlaced < mineTotal && !forceEmpty) {
 			if (Math.random() <= pToPlaceMine()) {
 				minesPlaced++;
-				value = "-1"; // mine
+				value = -1; // mine
 			}
 		}
 		spacesCovered++;
@@ -70,10 +73,24 @@ function populateMinefield(initX, initY) {
 	});
 }
 
+function gridClick(event) {
+	let code = event.button;
+	let target = event.target;
+	// let pos = target.id.match(/^pos-(?<x>\d+)-(?<y>\d+)$/).groups;
+	// let x = Number(pos.x);
+	// let y = Number(pos.y);
+
+	if (code === 0) {
+		gridLeftClick(target);
+	}
+	else if (code === 2) {
+		gridRightClick(target);
+	}
+}
+
 let newGame = true;
 
-function onPlayerClick(event) {
-	let square = event.target;
+function gridLeftClick(square) {
 	let pos = square.id.match(/^pos-(?<x>\d+)-(?<y>\d+)$/).groups;
 	let x = Number(pos.x);
 	let y = Number(pos.y);
@@ -83,13 +100,24 @@ function onPlayerClick(event) {
 		newGame = false;
 	}
 
-	let value = field.get(x, y);
-	
-	if (value == -1) {
-		console.log("you lose");
+	if (square.className === "hidden") {
+		let value = field.get(x, y);
+
+		if (value === -1) {
+			console.log("you lose");
+		}
+		else if (value === 0) {
+			revealFrom(square, x, y);
+		}
 	}
-	else if (value == 0) {
-		revealFrom(square, x, y);
+}
+
+function gridRightClick(square) {
+	if (square.className === "hidden") {
+		square.className = "flagged";
+	}
+	else if (square.className === "flagged") {
+		square.className = "hidden";
 	}
 }
 
@@ -104,7 +132,7 @@ function revealFrom(square, x, y) {
 	}
 
 	if (adjacentMineCount == 0) {
-		square.className = "safe";
+		square.className = "none-adjacent";
 		for (let i = x - 1; i <= x + 1; i++) {
 			for (let j = y - 1; j <= y + 1; j++) {
 				let neighbor = document.getElementById(`pos-${i}-${j}`);
@@ -115,9 +143,7 @@ function revealFrom(square, x, y) {
 		}
 	}
 	else {
-		square.className = "dangerous";
+		square.className = "some-adjacent";
 		square.innerHTML = adjacentMineCount;
 	}
 }
-
-document.addEventListener("DOMContentLoaded", init);
