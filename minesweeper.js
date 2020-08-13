@@ -34,6 +34,7 @@ function createGrid() {
 
 	game.style.setProperty("--cell-size", `${cellWidth}px`);
 	game.style.setProperty("--gap", `${cellWidth * 0.1}px`);
+	game.style.setProperty("--font-size", `${cellWidth * 0.55}px`);
 
 	let grid = document.getElementById("minefield-container");
 
@@ -42,6 +43,8 @@ function createGrid() {
 			let div = document.createElement("div");
 			div.className = "hidden";
 			div.id = `pos-${j}-${i}`;
+			div.setAttribute("data-x", j);
+			div.setAttribute("data-y", i);
 			div.addEventListener("mouseup", gridClick);
 			div.addEventListener("contextmenu", (event) => {event.preventDefault();});
 			grid.appendChild(div);
@@ -65,7 +68,7 @@ function populateMinefield(initX, initY) {
 		if (minesPlaced < mineTotal && !forceEmpty) {
 			if (Math.random() <= pToPlaceMine()) {
 				minesPlaced++;
-				value = -1; // mine
+				value = 1; // mine
 			}
 		}
 		spacesCovered++;
@@ -76,9 +79,7 @@ function populateMinefield(initX, initY) {
 function gridClick(event) {
 	let code = event.button;
 	let target = event.target;
-	// let pos = target.id.match(/^pos-(?<x>\d+)-(?<y>\d+)$/).groups;
-	// let x = Number(pos.x);
-	// let y = Number(pos.y);
+	
 
 	if (code === 0) {
 		gridLeftClick(target);
@@ -91,9 +92,8 @@ function gridClick(event) {
 let newGame = true;
 
 function gridLeftClick(square) {
-	let pos = square.id.match(/^pos-(?<x>\d+)-(?<y>\d+)$/).groups;
-	let x = Number(pos.x);
-	let y = Number(pos.y);
+	let x = square.getAttribute("data-x");
+	let y = square.getAttribute("data-y");
 
 	if (newGame) {
 		populateMinefield(x, y);
@@ -107,12 +107,15 @@ function gridLeftClick(square) {
 			console.log("you lose");
 		}
 		else if (value === 0) {
-			revealFrom(square, x, y);
+			reveal(square, x, y);
 		}
 	}
 }
 
 function gridRightClick(square) {
+	let x = square.getAttribute("data-x");
+	let y = square.getAttribute("data-y");
+
 	if (square.className === "hidden") {
 		square.className = "flagged";
 	}
@@ -121,29 +124,44 @@ function gridRightClick(square) {
 	}
 }
 
-function revealFrom(square, x, y) {
-	let adjacentMineCount = 0;
+function reveal(square) {
+	let x = square.getAttribute("data-x");
+	let y = square.getAttribute("data-y");
+
+	let neighbors = getNeighbors(x, y);
+	let adjacentMineCount = neighbors.reduce((acc, nbr) => acc + field.get(nbr.getAttribute("data-x"), nbr.getAttribute("data-y")), 0);
+
+	if (adjacentMineCount === 0) {
+		square.className = "none-adjacent";
+		neighbors.forEach(nbr => nbr.className === "hidden" ? reveal(nbr) : null);
+	}
+	else {
+		square.className = "some-adjacent";
+	}
+
+	let span = document.createElement("span");
+	span.className = `adjacent-mines-${adjacentMineCount}`;
+	span.innerHTML = `${adjacentMineCount}`;
+	
+	let angle = (Math.random() * 15) - 7.5;
+	span.style.setProperty("--angle", `${angle}deg`);
+
+	setTimeout(() => square.appendChild(span), 200);
+}
+
+function getNeighbors(x, y) {
+	let list = new Array();
+	x = Number(x);
+	y = Number(y);
+
 	for (let i = x - 1; i <= x + 1; i++) {
 		for (let j = y - 1; j <= y + 1; j++) {
-			if (field.get(i, j) == -1) {
-				adjacentMineCount++;
+			let neighbor = document.getElementById(`pos-${i}-${j}`);
+			if (neighbor /* is not falsy */) {
+				list.push(neighbor);
 			}
 		}
 	}
 
-	if (adjacentMineCount == 0) {
-		square.className = "none-adjacent";
-		for (let i = x - 1; i <= x + 1; i++) {
-			for (let j = y - 1; j <= y + 1; j++) {
-				let neighbor = document.getElementById(`pos-${i}-${j}`);
-				if (neighbor && neighbor.className === "hidden") {
-					revealFrom(neighbor, i, j);
-				}
-			}
-		}
-	}
-	else {
-		square.className = "some-adjacent";
-		square.innerHTML = adjacentMineCount;
-	}
+	return list;
 }

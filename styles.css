@@ -16,6 +16,7 @@
 	--cols: 0;
 	--cell-size: 25px;
 	--gap: 2.5px;
+	--font-size: 20px;
 }
 
 .minefield-container {
@@ -32,6 +33,8 @@
 	border-radius: var(--gap);
 	transition: 0.2s ease-in-out;
 	z-index: 0;
+
+	text-align: center;
 }
 
 .hidden {
@@ -50,6 +53,21 @@
 
 .some-adjacent, .auto-reveal-eligible {
 	background-color: var(--some-color);
+}
+
+[class|=adjacent-mines] {
+	font-family: 'Rowdies';
+	font-size: var(--font-size);
+	line-height: var(--cell-size);
+	
+	--angle: 12.5deg;
+	transform: rotate(var(--angle));
+	-webkit-transform: rotate(var(--angle));
+	display: inline-block;
+}
+
+.adjacent-mines-0 {
+	color: var(--some-color);
 }
 
 .auto-reveal-eligible:hover {
