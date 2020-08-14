@@ -183,13 +183,13 @@ div.reset * {
 		background-color: var(--bg-color);
 	}
 	50%		{
-		transform: rotateX(90deg);
+		transform: rotateX(-90deg);
 	}
 	51% 	{
 		background-color: var(--hidden-color);
 	}
 	100%	{
-		transform: rotateX(180deg);
+		transform: rotateX(-180deg);
 		background-color: var(--hidden-color);
 	}
 }

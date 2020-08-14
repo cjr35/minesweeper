@@ -40,13 +40,13 @@ function createGrid() {
 
 	let grid = document.getElementById("minefield-container");
 
-	for (let i = 0; i < gridWidth; i++) {
-		for (let j = 0; j < gridHeight; j++) {
+	for (let i = 0; i < gridHeight; i++) {
+		for (let j = 0; j < gridWidth; j++) {
 			let div = document.createElement("div");
 			div.className = "hidden";
-			div.id = `pos-${j}-${i}`;
-			div.setAttribute("data-x", j);
-			div.setAttribute("data-y", i);
+			div.id = `pos-${i}-${j}`;
+			div.setAttribute("data-x", i);
+			div.setAttribute("data-y", j);
 			div.addEventListener("click", gridLeftClick);
 			div.addEventListener("auxclick", gridRightClick);
 			grid.appendChild(div);
@@ -55,8 +55,8 @@ function createGrid() {
 }
 
 function populateMinefield(initX, initY) {
-	field = new Minefield(gridWidth, gridHeight);
-	mineTotal = 40;
+	field = new Minefield(gridHeight, gridWidth);
+	mineTotal = 1;
 
 	let minesPlaced = 0;
 	let spacesCovered = 0;
@@ -146,6 +146,11 @@ async function reveal(square) {
 
 	setTimeout(() => {
 		span.style.opacity = 100;
+
+		if (document.querySelectorAll(".hidden, .flagged").length === mineTotal) {
+			console.log("you win");
+		}
+
 		neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
 								 nbr.className === "auto-reveal-eligible" ?
 								 checkAutoRevealEligibility(nbr) :
@@ -188,7 +193,7 @@ function checkAutoRevealEligibility(square) {
 
 		neighbors.forEach(nbr => {
 			if (nbr.className === "flagged") adjFlaggedCount++;
-			else if (nbr.className === "hidden") adjHiddenCount ++;
+			else if (nbr.className === "hidden") adjHiddenCount++;
 		});
 
 		square.className = (adjMineCount === adjFlaggedCount) &&
