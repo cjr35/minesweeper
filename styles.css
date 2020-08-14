@@ -163,7 +163,7 @@ div.lost-number > span {
 div.reset, div.reset * {
 	animation-duration: 0.5s;
 	animation-fill-mode: forwards;
-	animation-timing-function: linear;
+	animation-timing-function: cubic-bezier(0.75, 1, 1, 1);
 }
 
 div.reset {

@@ -273,7 +273,8 @@ async function reset(square) {
 	square.className = square.className.concat(" reset");
 	square.addEventListener("animationend", () => {
 		square.innerHTML = "";
-		square.className = "hidden"
+		square.className = "hidden";
+		square.removeEventListener("animationend", this);
 	});
 	newGame = true;
 }
