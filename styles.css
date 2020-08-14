@@ -80,14 +80,10 @@
 	
 	--angle: 0deg;
 	transform: rotate(var(--angle));
-	-ms-transform: rotate(var(--angle));
-	-webkit-transform: rotate(var(--angle));
 	display: inline-block;
 
 	pointer-events: none;
 	user-select: none;
-	-ms-user-select: none;
-	-webkit-user-select: none;
 }
 
 .adjacent-mines-0 {
@@ -99,27 +95,27 @@
 }
 
 .adjacent-mines-2 {
-	color: var(--hidden-color);
+	color: rgb(225, 147, 201);
 }
 
 .adjacent-mines-3 {
-	color: var(--hidden-color);
+	color: rgb(230, 133, 181);
 }
 
 .adjacent-mines-4 {
-	color: var(--hidden-color);
+	color: rgb(235, 119, 162);
 }
 
 .adjacent-mines-5 {
-	color: var(--hidden-color);
+	color: rgb(240, 106, 143);
 }
 
 .adjacent-mines-6 {
-	color: var(--hidden-color);
+	color: rgb(245, 92, 124);
 }
 
 .adjacent-mines-7 {
-	color: var(--hidden-color);
+	color: rgb(250, 79, 104);
 }
 
 .adjacent-mines-8 {
@@ -135,6 +131,7 @@
 
 .auto-reveal-eligible:hover > span {
 	color: black;
+	text-shadow: 0px 2px var(--some-color);
 }
 
 .flagged {
@@ -145,4 +142,16 @@
 	background-color: var(--flagged-accent);
 	margin: -2.5%;
 	z-index: 1;
+}
+
+.lost-mine {
+	background-color: var(--flagged-color);
+}
+
+.lost-mine > img {
+	height: var(--cell-size);
+	--angle: 0deg;
+	--x: 0px;
+	--y: 0px;
+	transform: scale(0.8) rotate(var(--angle)) translateX(var(--x)) translateY(var(--y));
 }

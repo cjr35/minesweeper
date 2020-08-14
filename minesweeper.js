@@ -106,13 +106,7 @@ function gridLeftClick(square) {
 	}
 
 	if (className === "hidden") {
-		let value = field.get(x, y);
-		if (value === 1) {
-			console.log("you lose");
-		}
-		else if (value === 0) {
-			reveal(square);
-		}
+		reveal(square);
 	}
 	else if (className === "auto-reveal-eligible") {
 		getNeighbors(x, y).forEach(nbr => {
@@ -124,7 +118,9 @@ function gridLeftClick(square) {
 	}
 }
 
-function reveal(square) {
+async function reveal(square) {
+	await sleep(50);
+
 	if (square.className !== "hidden") {
 		return;
 	}
@@ -133,7 +129,9 @@ function reveal(square) {
 	let y = square.getAttribute("data-y");
 
 	if (field.get(x, y) === 1) {
+		loseFrom(square);
 		console.log("you lose");
+		return;
 	}
 
 	let neighbors = getNeighbors(x, y);
@@ -158,13 +156,15 @@ function reveal(square) {
 	span.style.setProperty("--angle", `${angle}deg`);
 	square.appendChild(span);
 
+	checkAutoRevealEligibility(square);
+
 	setTimeout(() => {
 		span.style.opacity = 100;
 		neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
-								nbr.className === "auto-reveal-eligible" ?
-								checkAutoRevealEligibility(nbr) :
-								null);
-	}, 200);
+								 nbr.className === "auto-reveal-eligible" ?
+								 checkAutoRevealEligibility(nbr) :
+								 null);
+	}, 100);
 }
 
 function gridRightClick(square) {
@@ -187,27 +187,28 @@ function gridRightClick(square) {
 }
 
 function checkAutoRevealEligibility(square) {
-	let x = square.getAttribute("data-x");
-	let y = square.getAttribute("data-y");
-	console.log(square.className);
-	let adjMineCount = Number(square.firstChild.innerHTML);
-	if (adjMineCount === 0) {
-		return;
+	if (square.firstChild) {
+		let x = square.getAttribute("data-x");
+		let y = square.getAttribute("data-y");
+		let adjMineCount = Number(square.firstChild.innerHTML);
+		if (adjMineCount === 0) {
+			return;
+		}
+		let neighbors = getNeighbors(x, y);
+
+		let adjFlaggedCount = 0;
+		let adjHiddenCount = 0;
+
+		neighbors.forEach(nbr => {
+			if (nbr.className === "flagged") adjFlaggedCount++;
+			else if (nbr.className === "hidden") adjHiddenCount ++;
+		});
+
+		square.className = (adjMineCount === adjFlaggedCount) &&
+						   (adjHiddenCount > 0) ?
+						   "auto-reveal-eligible" :
+						   "some-adjacent";
 	}
-	let neighbors = getNeighbors(x, y);
-
-	let adjFlaggedCount = 0;
-	let adjHiddenCount = 0;
-
-	neighbors.forEach(nbr => {
-		if (nbr.className === "flagged") adjFlaggedCount++;
-		else if (nbr.className === "hidden") adjHiddenCount ++;
-	});
-
-	square.className = adjMineCount === adjFlaggedCount &&
-					   adjHiddenCount > 0 ?
-				   	   "auto-reveal-eligible" :
-				       "some-adjacent";
 }
 
 function getNeighbors(x, y) {
@@ -218,13 +219,55 @@ function getNeighbors(x, y) {
 	for (let i = x - 1; i <= x + 1; i++) {
 		for (let j = y - 1; j <= y + 1; j++) {
 			let neighbor = document.getElementById(`pos-${i}-${j}`);
-			if (neighbor /* is not falsy */) {
+			if (neighbor /* is not falsy */ && !(i === x && j === y)) {
 				list.push(neighbor);
 			}
 		}
 	}
 
 	return list;
+}
+
+async function loseFrom(square) {
+
+	let x = square.getAttribute("data-x");
+	let y = square.getAttribute("data-y");
+
+	let neighbors = getNeighbors(x, y);
+	
+	if (field.get(x, y) === 1) {
+		square.className = "lost-mine";
+		let img = document.createElement("img");
+		img.src = "./resources/mine.svg";
+
+		let angle = (Math.random() * 30) - 15;
+		img.style.setProperty("--angle", `${angle}deg`);
+
+		square.appendChild(img);
+	}
+	else {
+		square.className = "lost-number";
+
+		if (!square.firstChild) {
+			let adjMineCount = neighbors.reduce((acc, nbr) => acc + field.get(nbr.getAttribute("data-x"), nbr.getAttribute("data-y")), 0);
+
+			let span = document.createElement("span");
+			span.className = `adjacent-mines-${adjMineCount}`;
+			span.innerHTML = `${adjMineCount}`;
+			span.style.opacity = 0;
+			
+			let angle = (Math.random() * 15) - 7.5;
+			span.style.setProperty("--angle", `${angle}deg`);
+			square.appendChild(span);
+
+			setTimeout(() => span.style.opacity = 100, 100);
+		}
+	}
+	
+	await sleep(50);
+
+	neighbors.filter(nbr => !nbr.className.startsWith("lost"))
+			 .forEach(nbr => loseFrom(nbr));
 }
 
 function sleep(ms) {
