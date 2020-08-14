@@ -16,15 +16,18 @@
 #game-section {
 	--rows: 0;
 	--cols: 0;
-	--cell-size: 25px;
+	--square-size: 25px;
 	--gap: 2.5px;
 	--font-size: 20px;
 }
 
 .minefield-container {
-	display: grid;
-	grid-template-rows: repeat(var(--rows), var(--cell-size));
-	grid-template-columns: repeat(var(--cols), var(--cell-size));
+	perspective: 400px;
+	perspective-origin: center;
+
+	display: inline-grid;
+	grid-template-rows: repeat(var(--rows), var(--square-size));
+	grid-template-columns: repeat(var(--cols), var(--square-size));
 	gap: var(--gap);
 }
 
@@ -64,7 +67,7 @@ div.some-adjacent, div.auto-reveal-eligible {
 [class|=adjacent-mines] {
 	font-family: 'Rowdies';
 	font-size: var(--font-size);
-	line-height: var(--cell-size);
+	line-height: var(--square-size);
 	transition: 0.2s ease-in-out;
 	
 	--angle: 0deg;
@@ -137,11 +140,14 @@ div.some-adjacent, div.auto-reveal-eligible {
 }
 
 .lost-mine > img {
-	height: var(--cell-size);
+	height: var(--square-size);
 	--angle: 0deg;
 	--x: 0px;
 	--y: 0px;
 	transform: scale(0.8) rotate(var(--angle)) translateX(var(--x)) translateY(var(--y));
+
+	pointer-events: none;
+	user-select: none;
 }
 
 div.lost-number {
@@ -151,4 +157,51 @@ div.lost-number {
 
 div.lost-number > span {
 	color: var(--flagged-accent);
+	transition: 2s;
+}
+
+div.reset, div.reset * {
+	animation-duration: 0.5s;
+	animation-fill-mode: forwards;
+	animation-timing-function: linear;
+}
+
+div.reset {
+	animation-name: card-flip;
+	--bg-color: none;
+	transform-style: preserve-3d;
+	
+	box-shadow: none;
+}
+
+div.reset * {
+	animation-name: card-content-fade;
+}
+
+@keyframes card-flip {
+	49% 	{
+		background-color: var(--bg-color);
+	}
+	50%		{
+		transform: rotateX(90deg);
+	}
+	51% 	{
+		background-color: var(--hidden-color);
+	}
+	100%	{
+		transform: rotateX(180deg);
+		background-color: var(--hidden-color);
+	}
+}
+
+@keyframes card-content-fade {
+	49%		{
+		opacity: 100%;
+	}
+	51%		{
+		opacity: 0%;
+	}
+	100%	{
+		opacity: 0%;
+	}
 }

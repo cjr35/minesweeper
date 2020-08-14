@@ -1,4 +1,4 @@
-import Grid from './grid.js'
+import Grid from './grid.js';
 
 class Minefield extends Grid {
 	// override fill method
@@ -25,18 +25,18 @@ function createGrid() {
 	gridWidth = 16;
 	gridHeight = 16;
 
-	let game = document.getElementById("game-section");
+	let game = document.getElementById("game");
 
 	game.addEventListener("contextmenu", event => event.preventDefault());
 
 	game.style.setProperty("--rows", gridHeight);
 	game.style.setProperty("--cols", gridWidth);
 
-	let cellWidth = 600 / gridWidth;
+	let squareWidth = 600 / gridWidth;
 
-	game.style.setProperty("--cell-size", `${cellWidth}px`);
-	game.style.setProperty("--gap", `${cellWidth * 0.1}px`);
-	game.style.setProperty("--font-size", `${cellWidth * 0.55}px`);
+	game.style.setProperty("--square-size", `${squareWidth}px`);
+	game.style.setProperty("--gap", `${squareWidth * 0.1}px`);
+	game.style.setProperty("--font-size", `${squareWidth * 0.55}px`);
 
 	let grid = document.getElementById("minefield-container");
 
@@ -47,7 +47,8 @@ function createGrid() {
 			div.id = `pos-${j}-${i}`;
 			div.setAttribute("data-x", j);
 			div.setAttribute("data-y", i);
-			div.addEventListener("mouseup", gridClick);
+			div.addEventListener("click", gridLeftClick);
+			div.addEventListener("auxclick", gridRightClick);
 			grid.appendChild(div);
 		}
 	}
@@ -77,21 +78,10 @@ function populateMinefield(initX, initY) {
 	});
 }
 
-async function gridClick(event) {
-	let code = event.button;
-	let target = event.target;
-
-	if (code === 0) {
-		gridLeftClick(target);
-	}
-	else if (code === 2) {
-		gridRightClick(target);
-	}
-}
-
 let newGame = true;
 
-function gridLeftClick(square) {
+function gridLeftClick(event) {
+	let square = event.target;
 	let x = square.getAttribute("data-x");
 	let y = square.getAttribute("data-y");
 	let className = square.className;
@@ -163,7 +153,8 @@ async function reveal(square) {
 	}, 100);
 }
 
-function gridRightClick(square) {
+function gridRightClick(event) {
+	let square = event.target;
 	let x = square.getAttribute("data-x");
 	let y = square.getAttribute("data-y");
 
@@ -271,6 +262,20 @@ async function loseFrom(square) {
 
 	neighbors.filter(nbr => !nbr.className.startsWith("lost"))
 			 .forEach(nbr => loseFrom(nbr));
+	
+	reset(square);
+}
+
+async function reset(square) {
+	await sleep(2000);
+	let bg = window.getComputedStyle(square).backgroundColor;
+	square.style.setProperty("--bg-color", bg);
+	square.className = square.className.concat(" reset");
+	square.addEventListener("animationend", () => {
+		square.innerHTML = "";
+		square.className = "hidden"
+	});
+	newGame = true;
 }
 
 function sleep(ms) {
