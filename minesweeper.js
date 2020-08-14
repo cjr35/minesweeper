@@ -271,11 +271,11 @@ async function reset(square) {
 	let bg = window.getComputedStyle(square).backgroundColor;
 	square.style.setProperty("--bg-color", bg);
 	square.className = square.className.concat(" reset");
-	square.addEventListener("animationend", () => {
-		square.innerHTML = "";
-		square.className = "hidden";
-		square.removeEventListener("animationend", this);
-	});
+	square.addEventListener("animationend",
+		() => {
+			square.innerHTML = "";
+			square.className = "hidden";},
+		{ once: true });
 	newGame = true;
 }
 
