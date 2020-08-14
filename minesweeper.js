@@ -27,6 +27,8 @@ function createGrid() {
 
 	let game = document.getElementById("game-section");
 
+	game.addEventListener("contextmenu", event => event.preventDefault());
+
 	game.style.setProperty("--rows", gridHeight);
 	game.style.setProperty("--cols", gridWidth);
 
@@ -46,7 +48,6 @@ function createGrid() {
 			div.setAttribute("data-x", j);
 			div.setAttribute("data-y", i);
 			div.addEventListener("mouseup", gridClick);
-			div.addEventListener("contextmenu", (event) => {event.preventDefault();});
 			grid.appendChild(div);
 		}
 	}

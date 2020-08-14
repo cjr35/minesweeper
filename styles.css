@@ -9,6 +9,8 @@
 
 	--flagged-color: rgb(255, 90, 100);
 	--flagged-accent: rgb(255, 65, 85);
+
+	--shadow-color: rgb(220, 220, 220);
 }
 
 #game-section {
@@ -35,6 +37,8 @@
 	z-index: 0;
 
 	text-align: center;
+
+	box-shadow: 2px 2px 4px var(--shadow-color), -1px -1px 2px var(--some-color) inset;
 }
 
 .just-clicked {
@@ -64,12 +68,14 @@
 	z-index: 1;
 }
 
-.none-adjacent {
+div.none-adjacent {
 	background-color: var(--none-color);
+	box-shadow: none;
 }
 
-.some-adjacent, .auto-reveal-eligible {
+div.some-adjacent, div.auto-reveal-eligible {
 	background-color: var(--some-color);
+	box-shadow: 2px 2px 2px var(--shadow-color);
 }
 
 [class|=adjacent-mines] {
@@ -124,7 +130,6 @@
 
 .auto-reveal-eligible:hover {
 	background-color: var(--some-accent);
-	
 	margin: -2.5%;
 	z-index: 1;
 }
