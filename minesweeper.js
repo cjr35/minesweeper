@@ -15,6 +15,9 @@ class Minefield extends Grid {
 
 document.addEventListener("DOMContentLoaded", init);
 
+let resetbtn = document.getElementById("reset");
+resetbtn.addEventListener("click", resetAll);
+
 function init() {
 	createGrid();
 }
@@ -56,7 +59,7 @@ function createGrid() {
 
 function populateMinefield(initX, initY) {
 	field = new Minefield(gridHeight, gridWidth);
-	mineTotal = 1;
+	mineTotal = 40;
 
 	let minesPlaced = 0;
 	let spacesCovered = 0;
@@ -80,7 +83,9 @@ function populateMinefield(initX, initY) {
 
 let newGame = true;
 
-function gridLeftClick(event) {
+async function gridLeftClick(event) {
+	resetbtn.disabled = true;
+
 	let square = event.target;
 	let x = square.getAttribute("data-x");
 	let y = square.getAttribute("data-y");
@@ -102,6 +107,7 @@ function gridLeftClick(event) {
 		});
 		checkAutoRevealEligibility(square);
 	}
+	setTimeout(() => resetbtn.disabled = false, 50);
 }
 
 async function reveal(square) {
@@ -116,7 +122,6 @@ async function reveal(square) {
 
 	if (field.get(x, y) === 1) {
 		loseFrom(square);
-		console.log("you lose");
 		return;
 	}
 
@@ -144,18 +149,19 @@ async function reveal(square) {
 
 	checkAutoRevealEligibility(square);
 
-	setTimeout(() => {
-		span.style.opacity = 100;
+	await sleep(100);
 
-		if (document.querySelectorAll(".hidden, .flagged").length === mineTotal) {
-			console.log("you win");
-		}
+	span.style.opacity = 100;
 
-		neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
-								 nbr.className === "auto-reveal-eligible" ?
-								 checkAutoRevealEligibility(nbr) :
-								 null);
-	}, 100);
+	if (document.querySelectorAll(".hidden, .flagged").length === mineTotal) {
+		win();
+		return;
+	}
+
+	neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
+							 nbr.className === "auto-reveal-eligible" ?
+							 checkAutoRevealEligibility(nbr) :
+							 null);
 }
 
 function gridRightClick(event) {
@@ -173,9 +179,9 @@ function gridRightClick(event) {
 	let neighbors = getNeighbors(x, y);
 
 	neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
-							 nbr.className === "auto-reveal-eligible" ?
-							 checkAutoRevealEligibility(nbr) :
-							 null);
+							nbr.className === "auto-reveal-eligible" ?
+							checkAutoRevealEligibility(nbr) :
+							null);
 }
 
 function checkAutoRevealEligibility(square) {
@@ -221,7 +227,6 @@ function getNeighbors(x, y) {
 }
 
 async function loseFrom(square) {
-
 	let x = square.getAttribute("data-x");
 	let y = square.getAttribute("data-y");
 
@@ -231,8 +236,9 @@ async function loseFrom(square) {
 		square.className = "lost-mine";
 
 		let img = document.createElement("img");
-		img.src = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 79.4 79.4'%3E%3Cstyle%3E.a%7Bstroke-width:0.3;%7D%3C/style%3E%3Cdefs%3E%3CradialGradient cx='0.1' cy='56.9' r='10.2' gradientTransform='matrix(-1.95 0 0 -1.916 .2849 165.2)' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23ff4155' offset='0'/%3E%3Cstop stop-color='%23ff4155' offset='1'/%3E%3Cstop offset='1' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg style='fill:none;stroke-width:0.3'%3E%3Cellipse cx='13.6' cy='7.3' rx='8.3' ry='2.4'/%3E%3Cellipse cx='31.9' cy='20.3' rx='8.1' ry='7.6'/%3E%3C/g%3E%3Cg class='a'%3E%3Cpath d='m39.7 19.8a19.8 19.8 0 0 0-19.8 19.8 19.8 19.8 0 0 0 19.8 19.8 19.8 19.8 0 0 0 19.8-19.8 19.8 19.8 0 0 0-19.8-19.8z' paint-order='markers stroke fill'/%3E%3Crect x='6.6' y='37' width='66.2' height='5.3' rx='2.6' ry='2.6'/%3E%3Crect transform='rotate(90)' x='6.6' y='-42.3' width='66.2' height='5.3' rx='2.6' ry='2.6'/%3E%3Crect transform='rotate(45)' x='25.4' y='-2.6' width='19.8' height='5.3' rx='2.6' ry='2.6'/%3E%3C/g%3E%3Crect transform='rotate(225)' x='-86.4' y='-2.6' width='19.8' height='5.3' rx='2.6' ry='2.6'/%3E%3Crect transform='rotate(-45)' x='-30.5' y='53.7' width='19.8' height='5.3' rx='2.6' ry='2.6' style='mix-blend-mode:normal;paint-order:markers stroke fill;stroke-linejoin:round;stroke-width:0.5;stroke:url(%23radialGradient954)'/%3E%3Crect transform='rotate(-45)' x='10.7' y='53.3' width='19.8' height='5.3' rx='2.6' ry='2.6' class='a'/%3E%3Cellipse transform='rotate(45)' cx='56.1' cy='-13.1' rx='7.1' ry='2.4' style='fill:%23ff4155;stroke-width:0.3'/%3E%3C/svg%3E";
-
+		{
+			img.src = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 79.4 79.4'%3E%3Cstyle%3E.a%7Bstroke-width:0.3;%7D%3C/style%3E%3Cdefs%3E%3CradialGradient cx='0.1' cy='56.9' r='10.2' gradientTransform='matrix(-1.95 0 0 -1.916 .2849 165.2)' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23ff4155' offset='0'/%3E%3Cstop stop-color='%23ff4155' offset='1'/%3E%3Cstop offset='1' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg style='fill:none;stroke-width:0.3'%3E%3Cellipse cx='13.6' cy='7.3' rx='8.3' ry='2.4'/%3E%3Cellipse cx='31.9' cy='20.3' rx='8.1' ry='7.6'/%3E%3C/g%3E%3Cg class='a'%3E%3Cpath d='m39.7 19.8a19.8 19.8 0 0 0-19.8 19.8 19.8 19.8 0 0 0 19.8 19.8 19.8 19.8 0 0 0 19.8-19.8 19.8 19.8 0 0 0-19.8-19.8z' paint-order='markers stroke fill'/%3E%3Crect x='6.6' y='37' width='66.2' height='5.3' rx='2.6' ry='2.6'/%3E%3Crect transform='rotate(90)' x='6.6' y='-42.3' width='66.2' height='5.3' rx='2.6' ry='2.6'/%3E%3Crect transform='rotate(45)' x='25.4' y='-2.6' width='19.8' height='5.3' rx='2.6' ry='2.6'/%3E%3C/g%3E%3Crect transform='rotate(225)' x='-86.4' y='-2.6' width='19.8' height='5.3' rx='2.6' ry='2.6'/%3E%3Crect transform='rotate(-45)' x='-30.5' y='53.7' width='19.8' height='5.3' rx='2.6' ry='2.6' style='mix-blend-mode:normal;paint-order:markers stroke fill;stroke-linejoin:round;stroke-width:0.5;stroke:url(%23radialGradient954)'/%3E%3Crect transform='rotate(-45)' x='10.7' y='53.3' width='19.8' height='5.3' rx='2.6' ry='2.6' class='a'/%3E%3Cellipse transform='rotate(45)' cx='56.1' cy='-13.1' rx='7.1' ry='2.4' style='fill:%23ff4155;stroke-width:0.3'/%3E%3C/svg%3E";
+		} // inline svg
 		let angle = (Math.random() * 30) - 15;
 		img.style.setProperty("--angle", `${angle}deg`);
 
@@ -267,21 +273,51 @@ async function loseFrom(square) {
 
 	neighbors.filter(nbr => !nbr.className.startsWith("lost"))
 			 .forEach(nbr => loseFrom(nbr));
-	
-	reset(square);
 }
 
-async function reset(square) {
-	await sleep(2000);
+async function win() {
+	document.querySelectorAll(".hidden").forEach(async sqr => {
+		await sleep(50);
+		sqr.className = "flagged";
+	});
+}
+
+function reset(square) {
 	let bg = window.getComputedStyle(square).backgroundColor;
 	square.style.setProperty("--bg-color", bg);
-	square.className = square.className.concat(" reset");
+	square.className = square.className.concat(" flip");
 	square.addEventListener("animationend",
 		() => {
 			square.innerHTML = "";
 			square.className = "hidden";},
 		{ once: true });
+}
+
+async function resetAll() {
+	let squares = Array.from(document.querySelectorAll(".minefield-container > div"));
+	squares.sort((a, b) => {
+		let ax = a.getAttribute("data-x");
+		let ay = a.getAttribute("data-y");
+		let bx = b.getAttribute("data-x");
+		let by = b.getAttribute("data-y");
+
+		let aDist = Math.sqrt(ax ** 2 + ay ** 2);
+		let bDist = Math.sqrt(bx ** 2 + by ** 2);
+
+		return aDist - bDist;
+	});
+	let fieldElement = document.getElementById("minefield-container");
+	fieldElement.style.pointerEvents = "none";
+	for (let i = 0; i < squares.length; i++) {
+		let sqr = squares[i];
+		if (sqr.className !== "hidden") {
+			await sleep(2);
+			reset(sqr);
+		}
+	}
 	newGame = true;
+	resetbtn.disabled = true;
+	setTimeout(() => fieldElement.style.pointerEvents = "all", 500);
 }
 
 function sleep(ms) {

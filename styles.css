@@ -37,11 +37,15 @@
 
 	border-radius: var(--gap);
 	transition: 0.2s ease-in-out;
+
+	position: relative;
 	z-index: 0;
 
 	text-align: center;
 
-	box-shadow: 2px 2px 4px var(--shadow-color), -1px -1px 2px var(--some-color) inset;
+	box-shadow: 2px 2px 4px var(--shadow-color),
+		-1px -1px 2px var(--some-color) inset;
+	pointer-events: inherit;
 }
 
 .hidden {
@@ -160,13 +164,15 @@ div.lost-number > span {
 	transition: 2s;
 }
 
-div.reset, div.reset * {
+div.flip, div.flip * {
 	animation-duration: 0.5s;
 	animation-fill-mode: forwards;
 	animation-timing-function: cubic-bezier(0.75, 1, 1, 1);
+	transform-origin: center center 20px;
+	z-index: 1;
 }
 
-div.reset {
+div.flip {
 	animation-name: card-flip;
 	--bg-color: none;
 	transform-style: preserve-3d;
@@ -174,8 +180,8 @@ div.reset {
 	box-shadow: none;
 }
 
-div.reset * {
-	animation-name: card-content-fade;
+div.flip * {
+	animation-name: square-content-fade;
 }
 
 @keyframes card-flip {
@@ -183,18 +189,21 @@ div.reset * {
 		background-color: var(--bg-color);
 	}
 	50%		{
-		transform: rotateX(-90deg);
+		transform: rotateX(-90deg) translateZ(20px);
 	}
 	51% 	{
-		background-color: var(--hidden-color);
+		background-color: var(--some-accent);
+	}
+	75%		{
+		background-color: var(--some-accent);
 	}
 	100%	{
-		transform: rotateX(-180deg);
+		transform: rotateX(-180deg) translateZ(40px);
 		background-color: var(--hidden-color);
 	}
 }
 
-@keyframes card-content-fade {
+@keyframes square-content-fade {
 	49%		{
 		opacity: 100%;
 	}
