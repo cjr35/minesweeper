@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 let resetbtn = document.getElementById("reset");
 resetbtn.addEventListener("click", resetAll);
+let resetbtnBlockerCount = 0;
 
 function init() {
 	createGrid();
@@ -107,7 +108,6 @@ async function gridLeftClick(event) {
 		});
 		checkAutoRevealEligibility(square);
 	}
-	setTimeout(() => resetbtn.disabled = false, 50);
 }
 
 async function reveal(square) {
@@ -116,6 +116,8 @@ async function reveal(square) {
 	if (square.className !== "hidden") {
 		return;
 	}
+
+	resetbtnBlockerCount++;
 
 	let x = square.getAttribute("data-x");
 	let y = square.getAttribute("data-y");
@@ -162,6 +164,9 @@ async function reveal(square) {
 							 nbr.className === "auto-reveal-eligible" ?
 							 checkAutoRevealEligibility(nbr) :
 							 null);
+
+	resetbtnBlockerCount--;
+	resetbtn.disabled = resetbtnBlockerCount === 0 ? false : true;
 }
 
 function gridRightClick(event) {
