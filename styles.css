@@ -26,6 +26,7 @@
 	perspective-origin: center;
 
 	display: inline-grid;
+	grid-auto-flow: column;
 	grid-template-rows: repeat(var(--rows), var(--square-size));
 	grid-template-columns: repeat(var(--cols), var(--square-size));
 	gap: var(--gap);

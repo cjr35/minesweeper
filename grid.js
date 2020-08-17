@@ -2,6 +2,7 @@ export default class Grid {
 	constructor(width, height) {
 		this.width = width;
 		this.height = height;
+		this.area = width * height
 
 		this.cells = new Array(width);
 		for (let i = 0; i < width; i++) {

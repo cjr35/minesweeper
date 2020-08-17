@@ -23,7 +23,7 @@ function init() {
 	createGrid();
 }
 
-let gridWidth, gridHeight, mineTotal, field;
+let gridWidth, gridHeight, mineTotal, field, minesPlaced;
 
 function createGrid() {
 	gridWidth = 16;
@@ -44,8 +44,8 @@ function createGrid() {
 
 	let grid = document.getElementById("minefield-container");
 
-	for (let i = 0; i < gridHeight; i++) {
-		for (let j = 0; j < gridWidth; j++) {
+	for (let i = 0; i < gridWidth; i++) {
+		for (let j = 0; j < gridHeight; j++) {
 			let div = document.createElement("div");
 			div.className = "hidden";
 			div.id = `pos-${i}-${j}`;
@@ -59,17 +59,18 @@ function createGrid() {
 }
 
 function populateMinefield(initX, initY) {
-	field = new Minefield(gridHeight, gridWidth);
+	// TODO: find new mine-placing algorithm
+	field = new Minefield(gridWidth, gridHeight);
 	mineTotal = 40;
 
-	let minesPlaced = 0;
+	minesPlaced = 0;
 	let spacesCovered = 0;
 
 	function pToPlaceMine() {
-		return 1 / ((field.width * field.height - spacesCovered) / (mineTotal - minesPlaced));
+		return 1 / ((field.area - spacesCovered) / (mineTotal - minesPlaced));
 	}
 
-	field.fill(initX, initY, function(forceEmpty) {
+	field.fill(initX, initY, forceEmpty => {
 		let value = 0; // empty space
 		if (minesPlaced < mineTotal && !forceEmpty) {
 			if (Math.random() <= pToPlaceMine()) {
@@ -80,6 +81,10 @@ function populateMinefield(initX, initY) {
 		spacesCovered++;
 		return value;
 	});
+
+	if (minesPlaced < mineTotal) {
+		let initNeighborCount = getNeighbors(x, y).length;
+	}
 }
 
 let newGame = true;
@@ -151,22 +156,22 @@ async function reveal(square) {
 
 	checkAutoRevealEligibility(square);
 
-	await sleep(100);
+	setTimeout( () => {
+		span.style.opacity = 100;
 
-	span.style.opacity = 100;
+		if (document.querySelectorAll(".hidden, .flagged").length === mineTotal) {
+			win();
+			return;
+		}
 
-	if (document.querySelectorAll(".hidden, .flagged").length === mineTotal) {
-		win();
-		return;
-	}
+		neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
+								nbr.className === "auto-reveal-eligible" ?
+								checkAutoRevealEligibility(nbr) :
+								null);
 
-	neighbors.forEach(nbr => nbr.className === "some-adjacent" ||
-							 nbr.className === "auto-reveal-eligible" ?
-							 checkAutoRevealEligibility(nbr) :
-							 null);
-
-	resetbtnBlockerCount--;
-	resetbtn.disabled = resetbtnBlockerCount === 0 ? false : true;
+		resetbtnBlockerCount--;
+		resetbtn.disabled = resetbtnBlockerCount === 0 ? false : true;
+	}, 100);
 }
 
 function gridRightClick(event) {
@@ -327,4 +332,29 @@ async function resetAll() {
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+document.getElementById("test").addEventListener("click", testGeneration);
+
+function testGeneration() {
+	gridWidth = 16;
+	gridHeight = 16;
+	for (let i = 1; i < 256; i++) {
+		mineTotal = i;
+		let failedGenTotal = 0;
+		let minesMissedTotal = 0;
+		for (let j = 0; j < 10000; j++) {
+			populateMinefield(Math.floor(Math.random() * 30), Math.floor(Math.random() * 16));
+			let minesMissed = mineTotal - minesPlaced;
+			if (minesMissed !== 0) {
+				failedGenTotal++;
+				minesMissedTotal += minesMissed;
+			}
+		}
+		console.log({
+			mineTotal: mineTotal,
+			failedGenPctg: (failedGenTotal / 10000) * 100,
+			avgMinesMissed: minesMissedTotal / failedGenTotal
+		});
+	}
 }
