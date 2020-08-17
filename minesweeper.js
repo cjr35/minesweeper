@@ -83,7 +83,41 @@ function populateMinefield(initX, initY) {
 	});
 
 	if (minesPlaced < mineTotal) {
-		let initNeighborCount = getNeighbors(x, y).length;
+		let initNeighbors = getNeighbors(initX, initY);
+		let squares = Array.from(document.querySelectorAll(".minefield-container > div"));
+		squares = squares.filter(sqr => !initNeighbors.includes(sqr) && sqr.id !== `pos-${initX}-${initY}`);
+		
+		shuffle(squares);
+		let sqr, x, y;
+		for (let i = 0; i < squares.length; i++) {
+			sqr = squares[i];
+			x = sqr.getAttribute("data-x");
+			y = sqr.getAttribute("data-y");
+			if (field.get(x, y) === 0) {
+				field.set(x, y, 1);
+				minesPlaced++;
+				if (minesPlaced === mineTotal) {
+					break;
+				}
+			}
+		}
+
+		if (minesPlaced < mineTotal) {
+			shuffle(initNeighbors);
+			let nbr, x, y;
+			for (let i = 0; i < initNeighbors.length; i++) {
+				nbr = initNeighbors[i];
+				x = nbr.getAttribute("data-x");
+				y = nbr.getAttribute("data-y");
+				if (field.get(x, y) === 0) {
+					field.set(x, y, 1);
+					minesPlaced++;
+					if (minesPlaced === mineTotal) {
+						break;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -334,6 +368,15 @@ function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function shuffle(array) {
+	for (let i = array.length - 1; i > 0; i--) {
+		let randSwap = Math.floor(Math.random() * i);
+		let temp = array[i];
+		array[i] = array[randSwap];
+		array[randSwap] = temp;
+	}
+}
+
 document.getElementById("test").addEventListener("click", testGeneration);
 
 function testGeneration() {
@@ -344,7 +387,7 @@ function testGeneration() {
 		let failedGenTotal = 0;
 		let minesMissedTotal = 0;
 		for (let j = 0; j < 10000; j++) {
-			populateMinefield(Math.floor(Math.random() * 30), Math.floor(Math.random() * 16));
+			populateMinefield(Math.floor(Math.random() * 16), Math.floor(Math.random() * 16));
 			let minesMissed = mineTotal - minesPlaced;
 			if (minesMissed !== 0) {
 				failedGenTotal++;
