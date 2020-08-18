@@ -141,11 +141,16 @@ div.some-adjacent, div.auto-reveal-eligible {
 	z-index: 1;
 }
 
-.lost-mine {
+.lost-flagged-mine {
 	background-color: var(--flagged-color);
 }
 
-.lost-mine > img, .won-mine > img {
+div.lost-missed-mine {
+	background-color: rgb(255, 205, 208);
+	box-shadow: none;
+}
+
+.lost-flagged-mine > img, .lost-missed-mine > img, .won-mine > img {
 	height: var(--square-size);
 	--angle: 0deg;
 	--x: 0px;
@@ -165,6 +170,15 @@ div.lost-number {
 
 div.lost-number > span {
 	color: var(--flagged-accent);
+	transition: 0.2s;
+}
+
+div.lost-bad-flag {
+	background-color: var(--flagged-color);
+}
+
+div.lost-bad-flag > span {
+	color: black;
 	transition: 0.2s;
 }
 

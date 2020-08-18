@@ -284,7 +284,12 @@ async function loseFrom(square) {
 	let neighbors = getNeighbors(x, y);
 	
 	if (field.get(x, y) === 1) {
-		square.className = "lost-mine";
+		if (square.className === "flagged") {
+			square.className = "lost-flagged-mine";
+		}
+		else {
+			square.className = "lost-missed-mine";
+		}
 
 		let img = document.createElement("img");
 		{
@@ -300,7 +305,12 @@ async function loseFrom(square) {
 		setTimeout(() => img.style.opacity = 1, 100);
 	}
 	else {
-		square.className = "lost-number";
+		if (square.className === "flagged") {
+			square.className = "lost-bad-flag";
+		}
+		else {
+			square.className = "lost-number";
+		}
 
 		if (!square.firstChild) {
 			let adjMineCount = neighbors.reduce((acc, nbr) => acc + field.get(nbr.getAttribute("data-x"), nbr.getAttribute("data-y")), 0);
@@ -316,7 +326,7 @@ async function loseFrom(square) {
 
 			square.appendChild(span);
 
-			setTimeout(() => span.style.opacity = 100, 100);
+			setTimeout(() => span.style.opacity = 1, 100);
 		}
 	}
 	
