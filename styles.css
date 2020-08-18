@@ -51,6 +51,7 @@
 
 .hidden {
 	background-color: var(--hidden-color);
+	z-index: 0;
 }
 
 .hidden:hover {
@@ -144,12 +145,14 @@ div.some-adjacent, div.auto-reveal-eligible {
 	background-color: var(--flagged-color);
 }
 
-.lost-mine > img {
+.lost-mine > img, .won-mine > img {
 	height: var(--square-size);
 	--angle: 0deg;
 	--x: 0px;
 	--y: 0px;
 	transform: scale(0.8) rotate(var(--angle)) translateX(var(--x)) translateY(var(--y));
+	opacity: 0;
+	transition: 0.2s;
 
 	pointer-events: none;
 	user-select: none;
@@ -162,7 +165,7 @@ div.lost-number {
 
 div.lost-number > span {
 	color: var(--flagged-accent);
-	transition: 2s;
+	transition: 0.2s;
 }
 
 div.flip, div.flip * {
@@ -214,4 +217,210 @@ div.flip * {
 	100%	{
 		opacity: 0%;
 	}
+}
+
+[class|=won] {
+	pointer-events: none;
+}
+
+div.won-mine {
+	background-color: #b3eae2;
+}
+
+div.won-mine > img.shaking {
+	animation-name: shake;
+	animation-duration: 0.75s;
+}
+
+@keyframes shake {
+	0%	{
+		transform: translateX(3px) translateY(2px) scale(0.80);
+	}
+	2%	{
+		transform: translateX(1px) translateY(2px) scale(0.79);
+	}
+	4%	{
+		transform: translateX(-3px) translateY(1px) scale(0.78);
+	}
+	6%	{
+		transform: translateX(-2px) translateY(-2px) scale(0.77);
+	}
+	8%	{
+		transform: translateX(1px) translateY(-2px) scale(0.76);
+	}
+	10%	{
+		transform: translateX(3px) translateY(-3px) scale(0.75);
+	}
+	12%	{
+		transform: translateX(-3px) translateY(-3px) scale(0.74);
+	}
+	14%	{
+		transform: translateX(-3px) translateY(-2px) scale(0.73);
+	}
+	16%	{
+		transform: translateX(-2px) translateY(-2px) scale(0.72);
+	}
+	18%	{
+		transform: translateX(2px) translateY(3px) scale(0.71);
+	}
+	20%	{
+		transform: translateX(-3px) translateY(-1px) scale(0.70);
+	}
+	22%	{
+		transform: translateX(-1px) translateY(2px) scale(0.69);
+	}
+	24%	{
+		transform: translateX(3px) translateY(-3px) scale(0.68);
+	}
+	26%	{
+		transform: translateX(3px) translateY(2px) scale(0.67);
+	}
+	28%	{
+		transform: translateX(-3px) translateY(1px) scale(0.66);
+	}
+	30%	{
+		transform: translateX(1px) translateY(1px) scale(0.65);
+	}
+	32%	{
+		transform: translateX(1px) translateY(-3px) scale(0.64);
+	}
+	34%	{
+		transform: translateX(-3px) translateY(1px) scale(0.63);
+	}
+	36%	{
+		transform: translateX(-1px) translateY(0px) scale(0.62);
+	}
+	38%	{
+		transform: translateX(0px) translateY(3px) scale(0.61);
+	}
+	40%	{
+		transform: translateX(-1px) translateY(1px) scale(0.60);
+	}
+	42%	{
+		transform: translateX(3px) translateY(1px) scale(0.59);
+	}
+	44%	{
+		transform: translateX(3px) translateY(1px) scale(0.58);
+	}
+	46%	{
+		transform: translateX(-1px) translateY(-3px) scale(0.57);
+	}
+	48%	{
+		transform: translateX(0px) translateY(1px) scale(0.56);
+	}
+	50%	{
+		transform: translateX(3px) translateY(3px) scale(0.55);
+	}
+	52%	{
+		transform: translateX(1px) translateY(3px) scale(0.54);
+	}
+	54%	{
+		transform: translateX(-2px) translateY(0px) scale(0.53);
+	}
+	56%	{
+		transform: translateX(-2px) translateY(2px) scale(0.52);
+	}
+	58%	{
+		transform: translateX(0px) translateY(1px) scale(0.51);
+	}
+	60%	{
+		transform: translateX(-3px) translateY(0px) scale(0.50);
+	}
+	62%	{
+		transform: translateX(-3px) translateY(-2px) scale(0.49);
+	}
+	64%	{
+		transform: translateX(-2px) translateY(0px) scale(0.48);
+	}
+	66%	{
+		transform: translateX(-1px) translateY(0px) scale(0.47);
+	}
+	68%	{
+		transform: translateX(-3px) translateY(-3px) scale(0.46);
+	}
+	70%	{
+		transform: translateX(2px) translateY(-1px) scale(0.45);
+	}
+	72%	{
+		transform: translateX(-1px) translateY(-1px) scale(0.44);
+	}
+	74%	{
+		transform: translateX(-3px) translateY(1px) scale(0.43);
+	}
+	76%	{
+		transform: translateX(-1px) translateY(2px) scale(0.42);
+	}
+	78%	{
+		transform: translateX(1px) translateY(-3px) scale(0.41);
+	}
+	80%	{
+		transform: translateX(2px) translateY(2px) scale(0.40);
+	}
+	82%	{
+		transform: translateX(0px) translateY(-1px) scale(0.39);
+	}
+	84%	{
+		transform: translateX(2px) translateY(-2px) scale(0.38);
+	}
+	86%	{
+		transform: translateX(-3px) translateY(-2px) scale(0.37);
+	}
+	88%	{
+		transform: translateX(0px) translateY(3px) scale(0.36);
+	}
+	90%	{
+		transform: translateX(-1px) translateY(0px) scale(0.35);
+	}
+	92%	{
+		transform: translateX(0px) translateY(2px) scale(0.34);
+	}
+	94%	{
+		transform: translateX(3px) translateY(-3px) scale(0.33);
+	}
+	96%	{
+		transform: translateX(1px) translateY(0px) scale(0.32);
+	}
+	98%	{
+		transform: translateX(3px) translateY(0px) scale(0.31);
+	}
+	100%{
+		transform: translateX(2px) translateY(2px) scale(0.30);
+	}
+}
+
+.confetti {
+	position: absolute;
+	animation-name: poof;
+	animation-duration: 0.75s;
+	animation-fill-mode: forwards;
+	animation-timing-function: cubic-bezier(0, 0.75, 1, 1);
+  }
+  
+  @keyframes poof {
+	0%   {
+	  transform: scale(1.0) translateZ(1px);
+	  box-shadow: 1px 1px 2px #f0f0f0;
+	  opacity: 0;
+	}
+	5%  {
+	  opacity: 1;
+	}
+	65%  {
+	  opacity: 1;
+	}
+	100% {
+	  transform: scale(1.2) translateZ(1px);
+	  box-shadow: 2px 2px 4px #d0d0d0;
+	  opacity: 0;
+	}
+  }
+
+div.won-number {
+	background-color: var(--none-color);
+	box-shadow: none;
+}
+
+div.won-number > span {
+	color: #50c5B7;
+	transition: 0.2s;
 }
